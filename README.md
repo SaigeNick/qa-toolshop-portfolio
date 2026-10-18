@@ -1,6 +1,6 @@
 # QA Portfolio - Practice Software Testing (Toolshop)
 
-Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmith.
+Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmith (version 5.0, as of 2026-10-18).
 
 | Environment | URL |
 |---|---|
@@ -12,20 +12,29 @@ Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmit
 
 | Folder / file | Content | Status |
 |---|---|---|
-| `docs/TEST_PLAN.md` | Test strategy: scope, environments, entry/exit criteria, tools | done |
-| `docs/CHECKLIST_AND_TESTCASES.md` | Checklist + detailed test cases | in progress |
-| `docs/BUG_REPORTS.md` | Bug reports from the buggy version | planned |
-| `postman/` | Postman collection for the public API | planned |
-| `sql/` | SQL queries for data checks | planned |
-| `tests/`, `pages/` | Playwright (JavaScript) smoke tests | planned |
+| `docs/TEST_PLAN.md` | Test strategy: scope, risks, environments, entry/exit criteria, tools | Done |
+| `docs/CHECKLIST_AND_TESTCASES.md` | Checklist + detailed test cases | Planned |
+| `docs/BUG_REPORTS.md` | Bug reports from the buggy version | Planned |
+| `postman/` | Postman collection for the public API | Planned |
+| `sql/` | SQL queries for data validation | Planned |
+| `tests/`, `pages/` | Playwright (JavaScript) smoke tests | Planned |
 
 ## Tools
 
-- Chrome DevTools (Network, Console, Application)
-- Postman
-- SQL
-- Playwright (`@playwright/test`, JavaScript)
-- Git / GitHub Actions
+| Tool | Status |
+|---|---|
+| Chrome DevTools (Network, Console, Application) | Active |
+| Git / GitHub | Active |
+| Postman | Planned |
+| SQL | Planned |
+| Playwright (`@playwright/test`, JavaScript) | Planned |
+| GitHub Actions | Planned |
+
+## Note about SQL
+
+This is a public live demo without direct database access.
+SQL queries are written against a reconstructed relational schema inferred from the public API JSON responses.
+They demonstrate DB validation logic, they are not run against the real database.
 
 ## About
 
