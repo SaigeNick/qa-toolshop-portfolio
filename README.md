@@ -13,11 +13,11 @@ Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmit
 | Folder / file | Content | Status |
 |---|---|---|
 | `docs/TEST_PLAN.md` | Test strategy: scope, risks, environments, entry/exit criteria, tools | Done |
-| `docs/CHECKLIST_AND_TESTCASES.md` | Checklist + detailed test cases | Planned |
-| `docs/BUG_REPORTS.md` | Bug reports from the buggy version | Planned |
-| `postman/` | Postman collection for the public API | Planned |
-| `sql/` | SQL queries for data validation | Planned |
-| `tests/`, `pages/` | Playwright (JavaScript) smoke tests | Planned |
+| `docs/CHECKLIST_AND_TESTCASES.md` | Checklist + detailed test cases | Planned (Day 2) |
+| `docs/BUG_REPORTS.md` | Bug reports from the buggy version | Planned (Day 3) |
+| `postman/` | Postman collection for the public API | Planned (Day 4) |
+| `sql/` | SQL queries for data validation | Planned (Day 4) |
+| `tests/`, `pages/` | Playwright (JavaScript) smoke tests | Planned (Day 5-6) |
 
 ## Tools
 
@@ -25,18 +25,19 @@ Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmit
 |---|---|
 | Chrome DevTools (Network, Console, Application) | Active |
 | Git / GitHub | Active |
-| Postman | Planned |
-| SQL | Planned |
-| Playwright (`@playwright/test`, JavaScript) | Planned |
-| GitHub Actions | Planned |
+| Postman | Planned (Day 4) |
+| SQL / SQLite | Planned (Day 4) |
+| Playwright (`@playwright/test`, JavaScript) | Planned (Day 5) |
+| GitHub Actions | Planned (Day 7) |
 
 ## Note about SQL
 
 This is a public live demo without direct database access.
 SQL queries are written against a reconstructed relational schema inferred from the public API JSON responses.
-They demonstrate DB validation logic, they are not run against the real database.
+To check that they are correct, they will be executed against a local SQLite copy built from API responses (Day 4).
+The real production database is not used.
 
 ## About
 
-I focus on manual and API testing and use Playwright to automate the core smoke scenarios.
+I focus on manual and API testing. Playwright will be used to automate the core smoke scenarios (from Day 5).
 The repository grows step by step, the plan is in `docs/TEST_PLAN.md`.

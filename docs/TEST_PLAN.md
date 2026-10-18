@@ -3,7 +3,7 @@
 ## 1. Overview
 
 Toolshop is a demo online shop for tools (version 5.0, as of 2026-10-18).
-As of 2026-10-18 the catalog has 50 products in 3 main categories, prices range from 3.55 to 178.20.
+The catalog has 50 products in 3 main categories, prices range from 3.55 to 178.20.
 The goal of this plan is to check the main user flows of a customer: find a product, add it to the cart, log in and place an order.
 
 ## 2. Scope
@@ -36,21 +36,24 @@ The goal of this plan is to check the main user flows of a customer: find a prod
 
 | Type | How | Status |
 |---|---|---|
-| Smoke | Short manual run of key flows before each test run (search, product page, login, add to cart) | Active |
-| Functional | Checklist + detailed test cases for each area in scope | Active |
-| Negative | Invalid login, empty required fields, invalid email format, quantity 0 | Active |
-| Boundary values / equivalence partitioning | Price slider limits, quantity field, password length | Active |
-| Exploratory | Free sessions on the buggy version to find defects | Active |
-| API | Postman collection, status codes and response body checks | Planned |
-| Database | SQL queries for data validation logic (see section 4) | Planned |
-| Regression (automated) | Playwright smoke suite in CI | Planned |
+| Smoke | Short manual run of key flows before each test run (search, product page, login, add to cart) | Planned (Day 2) |
+| Functional | Checklist + detailed test cases for each area in scope | Planned (Day 2) |
+| Negative | Invalid login, empty required fields, invalid email format, quantity 0 | Planned (Day 2) |
+| Boundary values / equivalence partitioning | Price slider limits, quantity field, password length | Planned (Day 2) |
+| Exploratory | Free sessions on the buggy version to find defects | Planned (Day 3) |
+| API | Postman collection, status codes and response body checks | Planned (Day 4) |
+| Database | SQL queries for data validation logic (see section 4) | Planned (Day 4) |
+| Regression (automated) | Playwright smoke suite in CI | Planned (Day 5-7) |
+
+A status changes to Active when the related file is added to the repository.
 
 ## 4. Database checks - limitation
 
 The project tests a public live demo, so there is no direct access to the database.
-SQL queries (planned) are written against a reconstructed relational schema inferred from the public API JSON responses
+SQL queries (planned, Day 4) are written against a reconstructed relational schema inferred from the public API JSON responses
 (for example `GET /products` returns `category` and `brand` objects, so the schema has `products`, `categories` and `brands` tables linked by ids).
-The goal is to demonstrate DB validation logic (what a QA would check and how), not to run the queries against the real database.
+To make sure the queries are correct, they will be executed against a local SQLite copy built from API responses.
+The goal is to demonstrate DB validation logic (what a QA would check and how), the real production database is not used.
 
 ## 5. Environments
 
@@ -111,10 +114,10 @@ Each bug report contains: ID, title, environment, severity, priority, steps to r
 |---|---|---|
 | Chrome DevTools | Network requests, console errors, local storage | Active |
 | Git / GitHub (Markdown) | Version control, test documentation | Active |
-| Postman | Manual API testing, collection with basic tests | Planned |
-| SQL | Data validation queries (reconstructed schema) | Planned |
-| Playwright (JavaScript) | UI smoke automation | Planned |
-| GitHub Actions | Run Playwright tests on every push | Planned |
+| Postman | Manual API testing, collection with basic tests | Planned (Day 4) |
+| SQL / SQLite | Data validation queries on a local copy built from API data | Planned (Day 4) |
+| Playwright (JavaScript) | UI smoke automation | Planned (Day 5) |
+| GitHub Actions | Run Playwright tests on every push | Planned (Day 7) |
 
 ## 10. Risks
 
@@ -128,11 +131,11 @@ Each bug report contains: ID, title, environment, severity, priority, steps to r
 | Medium | Search and category filters | Customer cannot find products, but has a workaround (browse the catalog) |
 | Low | Sorting, pagination, static pages | Inconvenient but does not block a purchase |
 
-High risk areas are tested first and in the most detail.
+High risk areas are tested first and in the most detail: about 15 of 25 checklist items cover checkout, auth and cart, the rest cover search, filters and sorting.
 
 ### Project risks
 
 - Demo site is public and shared, data (carts, accounts) can be changed by other users
 - Site can be updated without notice, so locators and data may change
 - The buggy version may have different bugs after updates
-- No direct DB access, SQL checks are based on a reconstructed schema
+- No direct DB access, SQL checks run on a local SQLite copy, so they cannot catch issues that exist only in the real database
