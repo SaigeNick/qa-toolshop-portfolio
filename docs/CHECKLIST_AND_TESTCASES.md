@@ -32,7 +32,7 @@ Items follow the risk matrix in TEST_PLAN.md (section 10):
 | CHK-12 | Cart - Product limit | High / P1 | Add "Thor Hammer" to the cart twice | First add succeeds. Second add shows "You can only have one Thor Hammer in the cart.", quantity stays 1 | Pass | - |
 | CHK-13 | Cart - Remove | High / P1 | Remove the only product from the cart with the red delete button | Toast "Product deleted.", text "The cart is empty. Nothing to display.", cart icon disappears from the header | Pass | - |
 | CHK-14 | Checkout - Steps | High / P1 | Go through checkout as a logged-in user: Cart -> Sign in -> Billing address -> Payment | Each step opens in order, the step indicator (1-4) highlights the current step | Pass | Step 2 has "Sign in" and "Continue as Guest" tabs. See TC-05 |
-| CHK-15 | Checkout - Payment | High / P1 | On the Payment step check the payment method dropdown and pay with "Bank Transfer" | Dropdown has 5 methods (Bank Transfer, Cash on Delivery, Credit Card, Buy Now Pay Later, Gift Card), after "Check payment" the order is placed and the cart is emptied | Pass | Bank Transfer fields: Bank Name, Account Name, Account Number (digits only, otherwise "Account number must be numeric.") |
+| CHK-15 | Checkout - Payment | High / P1 | On the Payment step check the payment method dropdown and pay with "Bank Transfer" | Dropdown has 5 methods (Bank Transfer, Cash on Delivery, Credit Card, Buy Now Pay Later, Gift Card), after "Check payment" the message "Payment was successful" is shown, after "Confirm" the order is placed with an invoice number | Pass | Bank Transfer fields: Bank Name, Account Name, Account Number (digits only, otherwise "Account number must be numeric.") |
 | CHK-16 | Search | Medium / P2 | Search for `pliers` | Caption "Searched for: pliers", 4 products: Combination Pliers, Pliers, Long Nose Pliers, Slip Joint Pliers | Pass | - |
 | CHK-17 | Search | Medium / P2 | Search for a non-existing word (`xyzqwe`) | Message "There are no products found.", no product cards | Pass | - |
 | CHK-18 | Search | Medium / P2 | After a search click the "X" (reset) button | Search field is cleared, caption disappears, default product list is shown again | Pass | - |
@@ -178,14 +178,16 @@ Steps:
 4. On "Sign in" log in with the demo account, click "Proceed to checkout".
 5. On "Billing address" fill the empty required fields (Postal code, House number, State), click "Proceed to checkout".
 6. On "Payment" select "Bank Transfer", fill Bank Name, Account Name and Account Number, click "Check payment".
-7. Check the result and the cart.
+7. Click "Confirm".
+8. Check the order confirmation and the cart.
 
 Expected result:
 
 - Step 2: Pliers line $24.02, Claw Hammer line $11.48, cart total $35.50.
 - Steps 3-6: each step opens only after the previous one, the step indicator moves 1 -> 2 -> 3 -> 4.
 - Step 6: Account Number accepts digits only ("Account number must be numeric." for other input).
-- Step 7: the order is placed, the cart is empty and the cart icon disappears from the header.
+- Step 6: after "Check payment" the message "Payment was successful" is shown and the "Confirm" button appears.
+- Step 7-8: "Thanks for your order! Your invoice number is INV-...", the cart is empty and the cart icon disappears from the header.
 
-Actual result: **Pass** - cart total was $35.50, all 4 steps opened in order, after "Check payment" the order was placed and the cart was emptied.
+Actual result: **Pass** - cart total was $35.50, all 4 steps opened in order, "Payment was successful" after "Check payment", then "Thanks for your order! Your invoice number is INV-2026000028." after "Confirm", the cart was emptied.
 Observation: the billing address of the shared demo account was only partly filled (Country "Slovakia", Street "Test street 98", City "Vienna", Postal code / House number / State empty). Most likely changed by other users of the public demo, so test data has to be checked before each run (see TEST_PLAN.md, project risks).
