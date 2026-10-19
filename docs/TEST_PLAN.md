@@ -36,10 +36,10 @@ The goal of this plan is to check the main user flows of a customer: find a prod
 
 | Type | How | Status |
 |---|---|---|
-| Smoke | Short manual run of key flows before each test run (search, product page, login, add to cart) | Planned (Day 2) |
-| Functional | Checklist + detailed test cases for each area in scope | Planned (Day 2) |
-| Negative | Invalid login, empty required fields, invalid email format, quantity 0 | Planned (Day 2) |
-| Boundary values / equivalence partitioning | Price slider limits, quantity field, password length | Planned (Day 2) |
+| Smoke | Short manual run of key flows before each test run (search, product page, login, add to cart) | Active |
+| Functional | Checklist + detailed test cases for each area in scope | Active |
+| Negative | Invalid login, empty required fields, invalid email format, quantity 0 | Active |
+| Boundary values / equivalence partitioning | Price slider limits, quantity field, password length | Active |
 | Exploratory | Free sessions on the buggy version to find defects | Planned (Day 3) |
 | API | Postman collection, status codes and response body checks | Planned (Day 4) |
 | Database | SQL queries for data validation logic (see section 4) | Planned (Day 4) |
@@ -136,6 +136,7 @@ High risk areas are tested first and in the most detail: about 15 of 25 checklis
 ### Project risks
 
 - Demo site is public and shared, data (carts, accounts) can be changed by other users
+- Test data pollution: other users create test data through the same public API, for example leftover brands like `nameDefault` or `zApiTest...` can appear in `GET /brands` and in the brand filter. The data is also reset from time to time (product and brand ids changed between 2026-10-18 and 2026-10-19), so tests must not depend on exact ids or on the full list of brands
 - Site can be updated without notice, so locators and data may change
 - The buggy version may have different bugs after updates
 - No direct DB access, SQL checks run on a local SQLite copy, so they cannot catch issues that exist only in the real database
