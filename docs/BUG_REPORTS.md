@@ -110,22 +110,35 @@ BUG-03 and BUG-04 were found during an exploratory session on the buggy site on 
 3. Check the prices of the first products in the grid.
 4. Repeat for "Price (Low - High)", "Name (A - Z)" and "Name (Z - A)".
 
-**Expected result:** "Price (High - Low)" shows the most expensive products first (on the stable site: $89.55 first in the default 1-100 range). Each option sorts in the direction of its label.
+**Expected result:** Each option sorts in the direction of its label. "Price (High - Low)" shows the most expensive product within the slider range (1-100) first.
 
-**Actual result:** "Price (High - Low)" shows the cheapest products first: $4.92, $9.17, $11.14, $11.48, $12.01 ... All 4 options are reversed:
+**Actual result:** "Price (High - Low)" shows the cheapest products first: $4.92, $9.17, $11.14, $11.48, $12.01 ... All 4 options are reversed.
+All rows below were checked in the UI under the same condition: home page, no search, default slider 1-100.
 
-| Selected option | Request sent | Grid shows |
+| Selected option | Request sent by the UI | Grid shows |
 |---|---|---|
-| Price (High - Low) | `sort=price,asc` | Cheapest first ($4.92) |
-| Price (Low - High) | `sort=price,desc` | Most expensive first ($125.23) |
-| Name (A - Z) | `sort=name,desc` | "Wood Saw" first |
-| Name (Z - A) | `sort=name,asc` | "Adjustable Wrench" first |
+| Price (High - Low) | `GET /products?sort=price,asc&between=price,1&page=0` | Cheapest first ($4.92, $9.17, $11.14 ...) |
+| Price (Low - High) | `GET /products?sort=price,desc&between=price,1&page=0` | Most expensive first ($125.23, $119.24, $100.79 ...) |
+| Name (A - Z) | `GET /products?sort=name,desc&between=price,1&page=0` | "Wood Saw" first |
+| Name (Z - A) | `GET /products?sort=name,asc&between=price,1&page=0` | "Adjustable Wrench" first |
+
+**Why the highest price is $125.23 here and $89.55 in CHK-22:** the two sites have different catalogs, and the buggy UI also drops the upper slider bound. Comparison of the "most expensive first" result:
+
+| Condition | Price filter actually applied | Products | Highest price |
+|---|---|---|---|
+| Stable UI, slider 1-100 (CHK-22) | `QUERY /products`, body `"between":"price,1,100"` | 45 of 50 | $89.55 |
+| Buggy UI, slider 1-100 | `between=price,1` (upper bound missing) | 26 of 26 | $125.23 |
+| Buggy API, direct call `between=price,1,100` | 1-100 | 23 of 26 | $80.19 |
+| Buggy API, direct call without `between` | none | 26 of 26 | $125.23 |
+
+So on the buggy site the slider shows 1-100, but the 3 products above $100 (Cordless Drill 20V $125.23, Cordless Drill 18V $119.24, Random Orbit Sander $100.79) are still listed. This is a separate defect from the reversed sort, see "Other observations".
 
 **DevTools / technical observation:**
 
 - Network: selecting "Price (High - Low)" sends `GET /products?sort=price,asc&between=price,1&page=0`, response `200`. The API returns exactly what was asked (ascending), and the grid renders the response correctly.
-- Elements: the dropdown options have swapped values, for example `<option value="price,asc">Price (High - Low)</option>` and `<option value="name,desc">Name (A - Z)</option>`.
+- Elements: the dropdown options have swapped values, for example `<option value="price,asc">Price (High - Low)</option>` and `<option value="name,desc">Name (A - Z)</option>`. On the stable site the same option is `<option value="price,desc">Price (High - Low)</option>`.
 - Root cause: the option values in the frontend sort dropdown are mapped to the wrong labels. The API is not the problem: calling it directly with `sort=price,desc` returns the most expensive products first.
+- Note: the stable site sends the product list request as `QUERY /products` with the filters in a JSON body, the buggy site sends `GET /products?...` with the filters in the URL.
 - Console: no errors related to sorting.
 
 **Screenshot:**
@@ -180,3 +193,4 @@ Found in the same session, lower impact, logged here so they are not lost:
 - Typos in the UI: "Sorth", "Serch", "Contakt".
 - Cart table has two "Total" column headers, the second one is above the delete button.
 - Cart quantity input has `max="10"` (stable site allows up to 99).
+- Price slider upper bound is ignored: with the default slider 1-100 the UI sends `between=price,1` instead of `between=price,1,100`, so products above $100 are shown (see BUG-03, comparison table). Candidate for a separate report.

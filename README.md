@@ -1,6 +1,6 @@
 # QA Portfolio - Practice Software Testing (Toolshop)
 
-Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmith (v2.5, built 2026-10-11 as shown in the site footer, checked on 2026-10-18).
+Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmith (v2.5, built 2026-10-11 as shown in the site footer, last verified on 2026-10-20).
 
 | Environment | URL |
 |---|---|
