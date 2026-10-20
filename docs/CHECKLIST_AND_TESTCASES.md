@@ -1,6 +1,6 @@
 # Checklist and Test Cases - Toolshop
 
-Environment: https://practicesoftwaretesting.com (v5.0), executed on 2026-10-19.
+Environment: https://practicesoftwaretesting.com (v2.5, built 2026-10-11), executed on 2026-10-19.
 Browser: Chrome (latest), 1920x1080.
 Test data: demo account `customer@practicesoftwaretesting.com` / `welcome01` (see TEST_PLAN.md, section 5).
 

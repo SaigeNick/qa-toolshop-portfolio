@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-Toolshop is a demo online shop for tools (version 5.0, as of 2026-10-18).
+Toolshop is a demo online shop for tools (v2.5, built 2026-10-11 as shown in the site footer, checked on 2026-10-18).
 The catalog has 50 products in 3 main categories, prices range from 3.55 to 178.20.
 The goal of this plan is to check the main user flows of a customer: find a product, add it to the cart, log in and place an order.
 
