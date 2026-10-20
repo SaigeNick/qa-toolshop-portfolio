@@ -6,8 +6,11 @@ Severity and priority follow the definitions in TEST_PLAN.md (section 8).
 |---|---|---|---|---|---|
 | BUG-01 | Cart quantity limit of 99 can be bypassed by adding the same product twice | Stable | High | P2 - Medium | CHK-11, TC-01 |
 | BUG-02 | Registration password error says "minimal 6 characters" while the real rule is 8 | Stable | Low | P3 - Low | CHK-06, TC-03 |
+| BUG-03 | All sort options send the opposite sort direction ("Price (High - Low)" shows cheapest first) | Buggy | Medium | P3 - Low | CHK-22, CHK-23 |
+| BUG-04 | Cart line total shows "$00.00" for every product, cart total is correct | Buggy | Medium | P2 - Medium | CHK-10 |
 
 BUG-01 and BUG-02 were found on the stable site during the Day 2 checklist run and re-checked on 2026-10-20.
+BUG-03 and BUG-04 were found during an exploratory session on the buggy site on 2026-10-20 (charter: "explore catalog sorting and cart calculation with DevTools open").
 
 ---
 
@@ -84,3 +87,96 @@ BUG-01 and BUG-02 were found on the stable site during the Day 2 checklist run a
 **Screenshot:**
 
 ![BUG-02 password error says minimal 6](screenshots/bug-02-password-length-mismatch.png)
+
+---
+
+## BUG-03 - All sort options send the opposite sort direction ("Price (High - Low)" shows cheapest first)
+
+| Field | Value |
+|---|---|
+| Environment | Buggy, https://with-bugs.practicesoftwaretesting.com, API https://api-with-bugs.practicesoftwaretesting.com, as of 2026-10-20 |
+| Browser | Playwright Chromium (headless) 1920x1080 |
+| Severity | Medium - sorting works wrong, but the user has a workaround (choose the opposite option) |
+| Priority | P3 - Low - sorting is a Low risk area in the risk matrix (TEST_PLAN.md, section 10), it does not block a purchase |
+| Linked | CHK-22, CHK-23 (same checks pass on the stable site) |
+| Reproducibility | Always, 4 of 4 sort options |
+
+**Preconditions:** Home page is open, no search or filters (default price range 1-100).
+
+**Steps to reproduce:**
+
+1. Open https://with-bugs.practicesoftwaretesting.com
+2. In the "Sorth" dropdown select "Price (High - Low)".
+3. Check the prices of the first products in the grid.
+4. Repeat for "Price (Low - High)", "Name (A - Z)" and "Name (Z - A)".
+
+**Expected result:** "Price (High - Low)" shows the most expensive products first (on the stable site: $89.55 first in the default 1-100 range). Each option sorts in the direction of its label.
+
+**Actual result:** "Price (High - Low)" shows the cheapest products first: $4.92, $9.17, $11.14, $11.48, $12.01 ... All 4 options are reversed:
+
+| Selected option | Request sent | Grid shows |
+|---|---|---|
+| Price (High - Low) | `sort=price,asc` | Cheapest first ($4.92) |
+| Price (Low - High) | `sort=price,desc` | Most expensive first ($125.23) |
+| Name (A - Z) | `sort=name,desc` | "Wood Saw" first |
+| Name (Z - A) | `sort=name,asc` | "Adjustable Wrench" first |
+
+**DevTools / technical observation:**
+
+- Network: selecting "Price (High - Low)" sends `GET /products?sort=price,asc&between=price,1&page=0`, response `200`. The API returns exactly what was asked (ascending), and the grid renders the response correctly.
+- Elements: the dropdown options have swapped values, for example `<option value="price,asc">Price (High - Low)</option>` and `<option value="name,desc">Name (A - Z)</option>`.
+- Root cause: the option values in the frontend sort dropdown are mapped to the wrong labels. The API is not the problem: calling it directly with `sort=price,desc` returns the most expensive products first.
+- Console: no errors related to sorting.
+
+**Screenshot:**
+
+![BUG-03 Price High-Low shows cheapest first](screenshots/bug-03-price-sort-reversed.png)
+
+---
+
+## BUG-04 - Cart line total shows "$00.00" for every product, cart total is correct
+
+| Field | Value |
+|---|---|
+| Environment | Buggy, https://with-bugs.practicesoftwaretesting.com, as of 2026-10-20 |
+| Browser | Playwright Chromium (headless) 1920x1080 |
+| Severity | Medium - the customer cannot check the price per line, but the cart total is correct and can be used instead |
+| Priority | P2 - Medium - cart calculation is a High risk area, a "$00.00" next to each product makes customers doubt the total |
+| Linked | CHK-10 (passes on the stable site) |
+| Reproducibility | Always (1 product and 2 products, quantity 1, 2 and 3) |
+
+**Preconditions:** Cart is empty, user is not logged in (guest).
+
+**Steps to reproduce:**
+
+1. Open https://with-bugs.practicesoftwaretesting.com and open the "Pliers" product page ($12.01).
+2. Set quantity to `2` and click "Add to cart".
+3. Open the cart.
+4. Check the "Total" column of the Pliers line and the cart total.
+
+**Expected result:** Pliers line total is $24.02 (2 x $12.01), cart total is $24.02.
+
+**Actual result:** The line total is "$00.00", the cart total is $24.02. The same happens for every line: Pliers x3 + Claw Hammer x1 show "$00.00" and "$00.00" with a correct cart total of $47.51.
+
+**DevTools / technical observation:**
+
+- Network: the buggy site does not call `/carts` on the API at all (on the stable site every add sends `POST /carts/{id}`). The cart is kept in the browser.
+- Application -> Session Storage: key `cart` = `[{"id":2,"name":"Pliers","quantity":2,"price":12.01,"total":24.02}]`. So the line total is calculated correctly and stored, it is only not shown.
+- Elements: the cell `<td data-test="line-price">$00.00</td>`. The value "$00.00" is not even a normal currency format (that would be `$0.00`), so it looks like a hard-coded placeholder instead of the `total` field.
+- Root cause (likely): the cart template does not bind the line total cell to the item `total`, while the cart total uses the correct data.
+- Console: no errors related to the cart.
+
+**Screenshot:**
+
+![BUG-04 cart line total shows $00.00](screenshots/bug-04-cart-line-total-zero.png)
+
+---
+
+## Other observations (buggy site, not reported in detail)
+
+Found in the same session, lower impact, logged here so they are not lost:
+
+- Logo image is broken, `GET /broken.png` returns `404` (Console: "Failed to load resource").
+- Typos in the UI: "Sorth", "Serch", "Contakt".
+- Cart table has two "Total" column headers, the second one is above the delete button.
+- Cart quantity input has `max="10"` (stable site allows up to 99).

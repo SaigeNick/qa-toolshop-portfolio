@@ -40,7 +40,7 @@ The goal of this plan is to check the main user flows of a customer: find a prod
 | Functional | Checklist + detailed test cases for each area in scope | Active |
 | Negative | Invalid login, empty required fields, invalid email format, quantity 0 | Active |
 | Boundary values / equivalence partitioning | Price slider limits, quantity field, password length | Active |
-| Exploratory | Free sessions on the buggy version to find defects | Planned (Day 3) |
+| Exploratory | Free sessions on the buggy version to find defects, results in `docs/BUG_REPORTS.md` | Active (as of 2026-10-20) |
 | API | Postman collection, status codes and response body checks | Planned (Day 4) |
 | Database | SQL queries for data validation logic (see section 4) | Planned (Day 4) |
 | Regression (automated) | Playwright smoke suite in CI | Planned (Day 5-7) |

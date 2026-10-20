@@ -14,7 +14,7 @@ Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmit
 |---|---|---|
 | `docs/TEST_PLAN.md` | Test strategy: scope, risks, environments, entry/exit criteria, tools | Done |
 | `docs/CHECKLIST_AND_TESTCASES.md` | 25-item risk-based checklist with execution results + 5 detailed test cases (BVA, EP, state transition) | Active |
-| `docs/BUG_REPORTS.md` | Bug reports from the buggy version | Planned (Day 3) |
+| `docs/BUG_REPORTS.md` | 4 bug reports: 2 from the stable site (found by the checklist), 2 from the buggy version (exploratory), with screenshots and DevTools notes | Active (as of 2026-10-20) |
 | `postman/` | Postman collection for the public API | Planned (Day 4) |
 | `sql/` | SQL queries for data validation | Planned (Day 4) |
 | `tests/`, `pages/` | Playwright (JavaScript) smoke tests | Planned (Day 5-6) |
@@ -25,7 +25,7 @@ Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmit
 |---|---|
 | Smoke, Functional, Negative | Active |
 | Boundary values / equivalence partitioning | Active |
-| Exploratory | Planned (Day 3) |
+| Exploratory | Active (as of 2026-10-20) |
 | API, Database (SQL) | Planned (Day 4) |
 | Regression (Playwright in CI) | Planned (Day 5-7) |
 
