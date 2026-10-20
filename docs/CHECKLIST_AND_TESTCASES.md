@@ -8,6 +8,9 @@ Note: the price slider is set to 1-100 by default (scale 0-200), so the catalog 
 
 ## Part 1 - Checklist
 
+Smoke set (5 checks): CHK-01, CHK-08, CHK-10, CHK-14, CHK-16 (login, add to cart, cart total, checkout steps, search).
+These 5 checks are run first on every test run, the rest of the checklist only if the smoke set passes.
+
 Items follow the risk matrix in TEST_PLAN.md (section 10):
 
 | Risk / Priority | Areas | Items |
@@ -23,12 +26,12 @@ Items follow the risk matrix in TEST_PLAN.md (section 10):
 | CHK-03 | Auth - Login | High / P1 | Click "Login" with empty email and password fields | Errors "Email is required" and "Password is required" are shown under the fields | Pass | - |
 | CHK-04 | Auth - Login | High / P1 | Enter an email without "@" (e.g. `customer.practicesoftwaretesting.com`) and submit | Error "Email format is invalid" is shown under the email field | Pass | - |
 | CHK-05 | Auth - Register | High / P1 | Submit the registration form with all fields empty | First name, Last name, Date of Birth, Country, Postal code, House number, Street, City, State, Phone, Email address and Password each show their own validation message, account is not created | Pass | - |
-| CHK-06 | Auth - Register | High / P1 | Enter a password of 7 characters (`Ab1!xyz`) in the registration form | Error message matches the rule shown under the field ("Be at least 8 characters long") | Fail | Validation works (7 chars rejected, 8 accepted), but the error text says "Password must be minimal 6 characters long." |
+| CHK-06 | Auth - Register | High / P1 | Enter a password of 7 characters (`Ab1!xyz`) in the registration form | Error message matches the rule shown under the field ("Be at least 8 characters long") | Fail | BUG-02. Validation works (7 chars rejected, 8 accepted), but the error text says "Password must be minimal 6 characters long." |
 | CHK-07 | Auth - Sign out | High / P1 | Log in, open the user menu and click "Sign out" | User is logged out, header shows "Sign in" again | Pass | - |
 | CHK-08 | Cart - Add | High / P1 | Open a product page, keep quantity 1 and click "Add to cart" | Toast "Product added to shopping cart." appears, cart counter in the header shows 1 | Pass | - |
 | CHK-09 | Cart - Quantity | High / P1 | On the product page click "+" twice (quantity 3) and add to cart | Cart counter increases by 3 | Pass | - |
 | CHK-10 | Cart - Calculation | High / P1 | In the cart change quantity of Claw Hammer ($11.48) from 1 to 2 | Toast "Product quantity updated.", line total and cart total are $22.96 | Pass | - |
-| CHK-11 | Cart - Quantity limits | High / P1 | Type `0`, `-1` and `100` in the quantity field (product page and cart), then add 99 of the same product twice | `0` and `-1` are reset to 1. `100` is reset to 99 with message "You can order at most 99 of this product.". Cart line never goes above 99 | Fail | Field limits work. But two adds of 99 put 198 Claw Hammers in the cart ($2,273.04), the 99 limit is checked per add only |
+| CHK-11 | Cart - Quantity limits | High / P1 | Type `0`, `-1` and `100` in the quantity field (product page and cart), then add 99 of the same product twice | `0` and `-1` are reset to 1. `100` is reset to 99 with message "You can order at most 99 of this product.". Cart line never goes above 99 | Fail | BUG-01. Field limits work. But two adds of 99 put 198 Claw Hammers in the cart ($2,273.04), the 99 limit is checked per add only |
 | CHK-12 | Cart - Product limit | High / P1 | Add "Thor Hammer" to the cart twice | First add succeeds. Second add shows "You can only have one Thor Hammer in the cart.", quantity stays 1 | Pass | - |
 | CHK-13 | Cart - Remove | High / P1 | Remove the only product from the cart with the red delete button | Toast "Product deleted.", text "The cart is empty. Nothing to display.", cart icon disappears from the header | Pass | - |
 | CHK-14 | Checkout - Steps | High / P1 | Go through checkout as a logged-in user: Cart -> Sign in -> Billing address -> Payment | Each step opens in order, the step indicator (1-4) highlights the current step | Pass | Step 2 has "Sign in" and "Continue as Guest" tabs. See TC-05 |
@@ -44,7 +47,7 @@ Items follow the risk matrix in TEST_PLAN.md (section 10):
 | CHK-24 | Pagination | Low / P3 | Open pages 1-5, then use "«" and "»" | 9 products per page, 45 unique products, no duplicates. Active page is highlighted, "«" is disabled on page 1 and "»" on page 5 | Pass | - |
 | CHK-25 | Contact form | Low / P3 | Click "Send" on the Contact page with all fields empty | Errors for First name, Last name, Email, Subject and Message are shown, form is not sent | Pass | - |
 
-Summary: 23 Pass, 2 Fail (CHK-06, CHK-11).
+Summary: 23 Pass, 2 Fail (CHK-06 / BUG-02, CHK-11 / BUG-01).
 
 ## Part 2 - Test Cases
 
@@ -52,7 +55,7 @@ Summary: 23 Pass, 2 Fail (CHK-06, CHK-11).
 
 | Field | Value |
 |---|---|
-| Linked CHK | CHK-11 |
+| Linked CHK | CHK-11 (BUG-01) |
 | Priority | High / P1 |
 | Technique | Boundary Value Analysis |
 | Preconditions | Cart is empty. Allowed quantity per product is 1-99 (input has `min="1"` and `max="99"`) |
@@ -77,7 +80,7 @@ Expected result:
 | 100 | Invalid (above max) | Field resets to 99, message "You can order at most 99 of this product." | Field resets to 99, same message, total $1,136.52 |
 
 Actual result: **Pass** - every value behaved as expected (also checked `-1`, it resets to 1).
-Related observation: the limit is checked per add, not per cart line (see CHK-11).
+Related observation: the limit is checked per add, not per cart line (see CHK-11, BUG-01).
 
 ### TC-02 - Login validation with equivalence partitions
 
@@ -109,7 +112,7 @@ Actual result: **Pass** - all 5 partitions behaved as expected.
 
 | Field | Value |
 |---|---|
-| Linked CHK | CHK-05, CHK-06 |
+| Linked CHK | CHK-05, CHK-06 (BUG-02) |
 | Priority | High / P1 |
 | Technique | Boundary Value Analysis |
 | Preconditions | Registration page is open (`/auth/register`). The hint under the field says: at least 8 characters, uppercase and lowercase letters, at least one number, at least one special symbol |
@@ -123,12 +126,11 @@ Steps:
 
 | Length | Boundary | Expected result | Actual |
 |---|---|---|---|
-| 7 | min-1 | Password error is shown | Error shown: "Password must be minimal 6 characters long." |
+| 7 | min-1 | Password error is shown and matches the hint: "Password must be at least 8 characters long." | Error shown: "Password must be minimal 6 characters long." - text does not match the hint and the real 8-character rule |
 | 8 | min | No password error | No password error |
 | 9 | min+1 | No password error | No password error |
 
-Actual result: **Pass** - the length boundary is at 8 characters, as the hint says.
-Observation: the error text says "minimal 6", which does not match the real rule (CHK-06 = Fail).
+Actual result: **Fail (see BUG-02)** - the length boundary itself works at 8 characters, as the hint says, but the error message for 7 characters says "minimal 6", which does not match the real rule (same as CHK-06).
 Also, a password without a number and symbol (`Abcdefgh`) shows "Password can not include invalid characters.", which is confusing because the problem is missing characters.
 Only client-side validation was checked, a full registration was not submitted.
 
@@ -176,7 +178,7 @@ Steps:
 2. Open the cart. Check line totals and cart total.
 3. Click "Proceed to checkout".
 4. On "Sign in" log in with the demo account, click "Proceed to checkout".
-5. On "Billing address" fill the empty required fields (Postal code, House number, State), click "Proceed to checkout".
+5. On "Billing address" check and fill the address: Street `Hlavna`, House number `12`, City `Bratislava`, State `Bratislavsky kraj`, Country `Slovakia`, Postal code `81101`. Click "Proceed to checkout".
 6. On "Payment" select "Bank Transfer", fill Bank Name, Account Name and Account Number, click "Check payment".
 7. Click "Confirm".
 8. Check the order confirmation and the cart.
