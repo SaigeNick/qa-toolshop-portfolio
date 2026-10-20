@@ -42,7 +42,8 @@ BUG-01 and BUG-02 were found on the stable site during the Day 2 checklist run a
 - The API does validate the quantity of a single request: `POST /carts/{cart_id}` with `"quantity":150` returns `422 {"message":"The quantity field must not be greater than 99."}`.
 - Root cause (likely): the 99 limit is checked only for the requested quantity, not for the resulting cart line (existing quantity + new quantity). Both the UI and the API add the quantities without checking the sum.
 - Console: no errors related to the add. The `401` on `GET /users/me` is expected for a guest user and is not related.
-- Not checked: whether the order can be confirmed with 198 items (checkout was not completed to avoid creating orders with wrong data on the shared demo).
+- Checkout does not stop the wrong quantity: after login (demo customer) the cart still has 198 items, the Billing address step accepts the address (Hlavna 12, Bratislava, Bratislavsky kraj, Slovakia, 81101), and on the Payment step "Bank Transfer" + "Check payment" sends `POST /payment/check` -> `200 {"message":"Payment was successful"}`, the "Confirm" button is shown. The request body has only the payment method and bank details, no cart quantity or amount, so this step does not validate the cart either.
+- "Confirm" was not clicked, to avoid creating an order with wrong data on the shared demo. So it is not checked whether the API rejects the order at the last step.
 
 **Screenshot:**
 
