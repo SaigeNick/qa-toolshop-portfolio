@@ -2,12 +2,14 @@
 
 Severity and priority follow the definitions in TEST_PLAN.md (section 8).
 
-| ID | Title | Environment | Severity | Priority | Linked |
-|---|---|---|---|---|---|
-| BUG-01 | Cart quantity limit of 99 can be bypassed by adding the same product twice | Stable | High | P2 - Medium | CHK-11, TC-01 |
-| BUG-02 | Registration password error says "minimal 6 characters" while the real rule is 8 | Stable | Low | P3 - Low | CHK-06, TC-03 |
-| BUG-03 | All sort options send the opposite sort direction ("Price (High - Low)" shows cheapest first) | Buggy | Medium | P3 - Low | CHK-22, CHK-23 |
-| BUG-04 | Cart line total shows "$00.00" for every product, cart total is correct | Buggy | Medium | P2 - Medium | CHK-10 |
+All 4 bugs are also tracked in Jira (project Toolshop, KAN-4 to KAN-7). Board: [screenshots/jira-board.png](screenshots/jira-board.png)
+
+| ID | Jira | Title | Environment | Severity | Priority | Linked |
+|---|---|---|---|---|---|---|
+| BUG-01 | KAN-4 | Cart quantity limit of 99 can be bypassed by adding the same product twice | Stable | High | P2 - Medium | CHK-11, TC-01 |
+| BUG-02 | KAN-5 | Registration password error says "minimal 6 characters" while the real rule is 8 | Stable | Low | P3 - Low | CHK-06, TC-03 |
+| BUG-03 | KAN-6 | All sort options send the opposite sort direction ("Price (High - Low)" shows cheapest first) | Buggy | Medium | P3 - Low | CHK-22, CHK-23 |
+| BUG-04 | KAN-7 | Cart line total shows "$00.00" for every product, cart total is correct | Buggy | Medium | P2 - Medium | CHK-10 |
 
 BUG-01 and BUG-02 were found on the stable site during the Day 2 checklist run and re-checked on 2026-10-20.
 BUG-03 and BUG-04 were found during an exploratory session on the buggy site on 2026-10-20 (charter: "explore catalog sorting and cart calculation with DevTools open").
@@ -23,6 +25,7 @@ BUG-03 and BUG-04 were found during an exploratory session on the buggy site on 
 | Severity | High - cart calculation works wrong, the cart line and total go above the allowed limit |
 | Priority | P2 - Medium - a business rule is broken in a High risk area (cart), but normal orders are not blocked |
 | Linked | CHK-11, TC-01 |
+| Jira | KAN-4 |
 | Reproducibility | 2 of 2 attempts |
 
 **Preconditions:** User is not logged in (guest), cart is empty. The quantity field on the product page allows 1-99 (`min="1"`, `max="99"`, typing `100` shows "You can order at most 99 of this product.").
@@ -63,6 +66,7 @@ BUG-03 and BUG-04 were found during an exploratory session on the buggy site on 
 | Severity | Low - text issue, validation itself works correctly |
 | Priority | P3 - Low - misleading for new customers, but registration is possible |
 | Linked | CHK-06, TC-03 |
+| Jira | KAN-5 |
 | Reproducibility | Always |
 
 **Preconditions:** User is logged out. Registration page is open: https://practicesoftwaretesting.com/auth/register
@@ -99,6 +103,7 @@ BUG-03 and BUG-04 were found during an exploratory session on the buggy site on 
 | Severity | Medium - sorting works wrong, but the user has a workaround (choose the opposite option) |
 | Priority | P3 - Low - sorting is a Low risk area in the risk matrix (TEST_PLAN.md, section 10), it does not block a purchase |
 | Linked | CHK-22, CHK-23 (same checks pass on the stable site) |
+| Jira | KAN-6 |
 | Reproducibility | Always, 4 of 4 sort options |
 
 **Preconditions:** Home page is open, no search or filters (default price range 1-100).
@@ -156,6 +161,7 @@ So on the buggy site the slider shows 1-100, but the 3 products above $100 (Cord
 | Severity | Medium - the customer cannot check the price per line, but the cart total is correct and can be used instead |
 | Priority | P2 - Medium - cart calculation is a High risk area, a "$00.00" next to each product makes customers doubt the total |
 | Linked | CHK-10 (passes on the stable site) |
+| Jira | KAN-7 |
 | Reproducibility | Always (1 product and 2 products, quantity 1, 2 and 3) |
 
 **Preconditions:** Cart is empty, user is not logged in (guest).

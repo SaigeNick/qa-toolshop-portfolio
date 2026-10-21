@@ -41,8 +41,8 @@ The goal of this plan is to check the main user flows of a customer: find a prod
 | Negative | Invalid login, empty required fields, invalid email format, quantity 0 | Active |
 | Boundary values / equivalence partitioning | Price slider limits, quantity field, password length | Active |
 | Exploratory | Free sessions on the buggy version to find defects, results in `docs/BUG_REPORTS.md` | Active (as of 2026-10-20) |
-| API | Postman collection, status codes and response body checks | Planned (Day 4) |
-| Database | SQL queries for data validation logic (see section 4) | Planned (Day 4) |
+| API | Postman collection, status codes and response body checks, see `postman/` | Active (verified 2026-10-21) |
+| Database | SQL queries for data validation logic (see section 4), see `sql/` | Active (verified 2026-10-21) |
 | Regression (automated) | Playwright smoke suite in CI | Planned (Day 5-7) |
 
 A status changes to Active when the related file is added to the repository.
@@ -50,9 +50,10 @@ A status changes to Active when the related file is added to the repository.
 ## 4. Database checks - limitation
 
 The project tests a public live demo, so there is no direct access to the database.
-SQL queries (planned, Day 4) are written against a reconstructed relational schema inferred from the public API JSON responses
+SQL queries (`sql/test_queries.sql`) are written against a reconstructed relational schema inferred from the public API JSON responses
 (for example `GET /products` returns `category` and `brand` objects, so the schema has `products`, `categories` and `brands` tables linked by ids).
-To make sure the queries are correct, they will be executed against a local SQLite copy built from API responses.
+To make sure the queries are correct, they were executed against a local SQLite copy built from API responses
+(`sql/schema_and_seed.sql`: brands, categories, 50 products and sample cart items fetched on 2026-10-21). All 6 queries ran with zero errors.
 The goal is to demonstrate DB validation logic (what a QA would check and how), the real production database is not used.
 
 ## 5. Environments
@@ -114,8 +115,8 @@ Each bug report contains: ID, title, environment, severity, priority, steps to r
 |---|---|---|
 | Chrome DevTools | Network requests, console errors, local storage | Active |
 | Git / GitHub (Markdown) | Version control, test documentation | Active |
-| Postman | Manual API testing, collection with basic tests | Planned (Day 4) |
-| SQL / SQLite | Data validation queries on a local copy built from API data | Planned (Day 4) |
+| Postman | Manual API testing, collection with basic tests | Active (verified 2026-10-21) |
+| SQL / SQLite | Data validation queries on a local copy built from API data | Active (verified 2026-10-21) |
 | Playwright (JavaScript) | UI smoke automation | Planned (Day 5) |
 | GitHub Actions | Run Playwright tests on every push | Planned (Day 7) |
 

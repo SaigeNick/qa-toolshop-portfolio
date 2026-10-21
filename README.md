@@ -1,6 +1,6 @@
 # QA Portfolio - Practice Software Testing (Toolshop)
 
-Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmith (v2.5, built 2026-10-11 as shown in the site footer, last verified on 2026-10-20).
+Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmith (v2.5, built 2026-10-11 as shown in the site footer, last verified on 2026-10-21).
 
 | Environment | URL |
 |---|---|
@@ -14,9 +14,9 @@ Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmit
 |---|---|---|
 | `docs/TEST_PLAN.md` | Test strategy: scope, risks, environments, entry/exit criteria, tools | Done |
 | `docs/CHECKLIST_AND_TESTCASES.md` | 25-item risk-based checklist with execution results + 5 detailed test cases (BVA, EP, state transition) | Active |
-| `docs/BUG_REPORTS.md` | 4 bug reports: 2 from the stable site (found by the checklist), 2 from the buggy version (exploratory), with screenshots and DevTools notes | Active (as of 2026-10-20) |
-| `postman/` | Postman collection for the public API | Planned (Day 4) |
-| `sql/` | SQL queries for data validation | Planned (Day 4) |
+| `docs/BUG_REPORTS.md` | 4 bug reports: 2 from the stable site (found by the checklist), 2 from the buggy version (exploratory), with screenshots and DevTools notes, linked to Jira (KAN-4 to KAN-7) | Active (as of 2026-10-20) |
+| `postman/` | Postman collection for the public API: 7 requests, positive and negative checks, variable chaining | Active (verified 2026-10-21) |
+| `sql/` | Schema + seed built from API responses and 6 SQL validation queries | Active (verified 2026-10-21) |
 | `tests/`, `pages/` | Playwright (JavaScript) smoke tests | Planned (Day 5-6) |
 
 ## Test types
@@ -26,7 +26,7 @@ Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmit
 | Smoke, Functional, Negative | Active |
 | Boundary values / equivalence partitioning | Active |
 | Exploratory | Active (as of 2026-10-20) |
-| API, Database (SQL) | Planned (Day 4) |
+| API, Database (SQL) | Active (verified 2026-10-21) |
 | Regression (Playwright in CI) | Planned (Day 5-7) |
 
 ## Tools
@@ -35,8 +35,8 @@ Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmit
 |---|---|
 | Chrome DevTools (Network, Console, Application) | Active |
 | Git / GitHub | Active |
-| Postman | Planned (Day 4) |
-| SQL / SQLite | Planned (Day 4) |
+| Postman | Active (verified 2026-10-21) |
+| SQL / SQLite | Active (verified 2026-10-21) |
 | Playwright (`@playwright/test`, JavaScript) | Planned (Day 5) |
 | GitHub Actions | Planned (Day 7) |
 
@@ -44,7 +44,8 @@ Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmit
 
 This is a public live demo without direct database access.
 SQL queries are written against a reconstructed relational schema inferred from the public API JSON responses.
-To check that they are correct, they will be executed against a local SQLite copy built from API responses (Day 4).
+All queries in `sql/test_queries.sql` were executed against a local SQLite copy built from API responses (`sql/schema_and_seed.sql`, data from 2026-10-21) with zero errors.
+Only `.sql` files are in the repo, the `.db` file is created locally when needed.
 The real production database is not used.
 
 ## About
