@@ -62,7 +62,11 @@ HAVING COUNT(p.id) = 0;
 
 -- Query 5: products and price stats per category
 -- Goal: compare product counts with the category filter in the UI (e.g. Pliers = 5, CHK-20)
--- and spot strange prices (0 or negative). HAVING keeps only categories with 3+ products.
+-- and get a quick price overview per category.
+-- HAVING filters groups after GROUP BY: only categories with 3 or more products are shown,
+-- so 6 smaller categories with 1-2 products (Hand Saw, Saw, Screwdriver, Storage Solutions,
+-- Tool Belts, Workbench) are hidden here.
+-- That is why the price anomaly check is a separate query (Query 7) over all products.
 -- Result: 9 rows
 --   Hammer 7 | 11.14 | 20.14 | 15.02
 --   Fasteners 6 | 3.55 | 7.99 | 5.32
@@ -85,14 +89,36 @@ HAVING COUNT(p.id) >= 3
 ORDER BY products DESC, c.name;
 
 
--- Query 6: cart lines above the 99 limit (BUG-01)
--- Goal: the business rule is max 99 per product, so this query should return 0 rows.
--- Line total = quantity * price, the same as the cart page shows.
--- Result: 1 row - Claw Hammer | 198 | 11.48 | 2273.04
--- Same amount as in BUG-01 ($2,273.04), so the bug is confirmed in the data too.
--- The second cart (TC-05 data: Pliers x2 + Claw Hammer x1 = 35.50) is not returned, as expected.
+-- Query 6: cart lines above the 99 limit (audit check, demonstrated on BUG-01 data)
+-- Goal: the business rule is max 99 per product per cart line. In a real production DB this
+-- query would run as a monitoring / audit check: any row it returns is an abnormal quantity
+-- that got past validation, and the expected result is 0 rows.
+-- In this snapshot it is demonstrated on the cart row created while reproducing BUG-01 via the API
+-- on 2026-10-21 (Claw Hammer added twice with quantity 99). The query does not prove the bug by itself,
+-- it shows that such a check would catch it. Line total = quantity * price, same as the cart page.
+-- Result: 1 row - Claw Hammer | 198 | 11.48 | 2273.04 (same amount as in BUG-01, $2,273.04)
+-- The normal cart (TC-05 data: Pliers x2 + Claw Hammer x1 = 35.50) is not returned, as expected.
 SELECT ci.cart_id, p.name, ci.quantity, p.price,
        ROUND(ci.quantity * p.price, 2) AS line_total
 FROM cart_items ci
 INNER JOIN products p ON p.id = ci.product_id
 WHERE ci.quantity > 99;
+
+
+-- Query 7: products with zero or negative price
+-- Goal: direct anomaly check over ALL products, without HAVING hiding small categories (see Query 5).
+-- A price of 0 or below should never reach the catalog. Expected: 0 rows.
+-- Result: 0 rows
+SELECT id, name, price
+FROM products
+WHERE price <= 0;
+
+
+-- Query 8: duplicate product names
+-- Goal: the same name twice in the catalog usually means a duplicate import or leftover test data.
+-- Expected: 0 rows.
+-- Result: 0 rows
+SELECT name, COUNT(*) AS cnt
+FROM products
+GROUP BY name
+HAVING COUNT(*) > 1;

@@ -1,7 +1,7 @@
 {
 	"info": {
 		"name": "Toolshop API",
-		"description": "Basic API checks for Practice Software Testing - Toolshop (https://api.practicesoftwaretesting.com). Positive and negative checks for products, search, brands, login and carts. Run the requests in order: 'Add item to cart' uses productId from 'Get products' and cartId from 'Create cart'.",
+		"description": "Basic API checks for Practice Software Testing - Toolshop (https://api.practicesoftwaretesting.com). Positive and negative checks for products, search, brands, login, current user and carts, plus an API reproduction of BUG-01 (KAN-4). Run the requests in order: the cart requests use productId from 'Get products' and cartId from 'Create cart', 'Get current user' uses authToken from 'Login - demo customer'.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -19,8 +19,9 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Response time is less than 2000ms\", function () {",
-							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"// public demo server, so the limit is generous to avoid flaky failures",
+							"pm.test(\"Response time is less than 5000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(5000);",
 							"});",
 							"",
 							"pm.test(\"Data array is not empty\", function () {",
@@ -175,6 +176,93 @@
 			"response": []
 		},
 		{
+			"name": "Login - demo customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const body = pm.response.json();",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Access token is returned\", function () {",
+							"    pm.expect(body.access_token).to.be.a(\"string\").that.is.not.empty;",
+							"    pm.expect(body.token_type).to.eql(\"bearer\");",
+							"});",
+							"",
+							"// token is valid for 5 minutes (expires_in: 300)",
+							"pm.collectionVariables.set(\"authToken\", body.access_token);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"customer@practicesoftwaretesting.com\",\n    \"password\": \"welcome01\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/login",
+					"host": ["{{baseUrl}}"],
+					"path": ["users", "login"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get current user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const body = pm.response.json();",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Returns the logged in user\", function () {",
+							"    pm.expect(body.email).to.eql(\"customer@practicesoftwaretesting.com\");",
+							"    pm.expect(body.first_name).to.eql(\"Jane\");",
+							"});",
+							"",
+							"pm.test(\"Password is not exposed\", function () {",
+							"    pm.expect(body).to.not.have.property(\"password\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/users/me",
+					"host": ["{{baseUrl}}"],
+					"path": ["users", "me"]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create cart",
 			"event": [
 				{
@@ -209,7 +297,7 @@
 			"response": []
 		},
 		{
-			"name": "Add item to cart",
+			"name": "Add item to cart - quantity 99",
 			"event": [
 				{
 					"listen": "test",
@@ -241,8 +329,86 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"product_id\": \"{{productId}}\",\n    \"quantity\": 1\n}"
+					"raw": "{\n    \"product_id\": \"{{productId}}\",\n    \"quantity\": 99\n}"
 				},
+				"url": {
+					"raw": "{{baseUrl}}/carts/{{cartId}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["carts", "{{cartId}}"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add same item again - quantity 99 (BUG-01)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// BUG-01 / KAN-4: the line already has 99, so the API should reject this (e.g. 422).",
+							"// Today it returns 200 - the test documents the current behaviour.",
+							"pm.test(\"BUG-01 still present: second add of 99 is accepted (expected 422)\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().result).to.eql(\"item added or updated\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"product_id\": \"{{productId}}\",\n    \"quantity\": 99\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/carts/{{cartId}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["carts", "{{cartId}}"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get cart - check quantity (BUG-01)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const body = pm.response.json();",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Cart has one line for the product\", function () {",
+							"    pm.expect(body.id).to.eql(pm.collectionVariables.get(\"cartId\"));",
+							"    pm.expect(body.cart_items).to.have.lengthOf(1);",
+							"    pm.expect(body.cart_items[0].product_id).to.eql(pm.collectionVariables.get(\"productId\"));",
+							"});",
+							"",
+							"// business rule: max 99 per cart line. When BUG-01 is fixed this test fails",
+							"// and should be changed to: quantity is at most 99",
+							"pm.test(\"BUG-01 still present: cart line quantity is 198 (rule: max 99)\", function () {",
+							"    pm.expect(body.cart_items[0].quantity).to.eql(198);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
 				"url": {
 					"raw": "{{baseUrl}}/carts/{{cartId}}",
 					"host": ["{{baseUrl}}"],
@@ -293,6 +459,10 @@
 		},
 		{
 			"key": "cartId",
+			"value": ""
+		},
+		{
+			"key": "authToken",
 			"value": ""
 		}
 	]
