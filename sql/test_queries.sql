@@ -109,6 +109,7 @@ WHERE ci.quantity > 99;
 -- Goal: direct anomaly check over ALL products, without HAVING hiding small categories (see Query 5).
 -- A price of 0 or below should never reach the catalog. Expected: 0 rows.
 -- Result: 0 rows
+-- Sanity check: with a test row price=0 added to a temporary copy, the query returns it.
 SELECT id, name, price
 FROM products
 WHERE price <= 0;
@@ -118,6 +119,7 @@ WHERE price <= 0;
 -- Goal: the same name twice in the catalog usually means a duplicate import or leftover test data.
 -- Expected: 0 rows.
 -- Result: 0 rows
+-- Sanity check: with a second "Thor Hammer" row added to a temporary copy, the query returns Thor Hammer, cnt 2.
 SELECT name, COUNT(*) AS cnt
 FROM products
 GROUP BY name

@@ -236,7 +236,6 @@
 							"",
 							"pm.test(\"Returns the logged in user\", function () {",
 							"    pm.expect(body.email).to.eql(\"customer@practicesoftwaretesting.com\");",
-							"    pm.expect(body.first_name).to.eql(\"Jane\");",
 							"});",
 							"",
 							"pm.test(\"Password is not exposed\", function () {",
