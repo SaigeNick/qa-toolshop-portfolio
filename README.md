@@ -17,7 +17,7 @@ Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmit
 | `docs/BUG_REPORTS.md` | 4 bug reports: 2 from the stable site (found by the checklist), 2 from the buggy version (exploratory), with screenshots and DevTools notes, linked to Jira (KAN-4 to KAN-7) | Active (as of 2026-10-20) |
 | `postman/` | Postman collection for the public API: 11 requests, positive and negative checks, variable chaining | Active (verified 2026-10-21) |
 | `sql/` | Schema + seed built from API responses and 8 SQL validation queries | Active (verified 2026-10-21) |
-| `tests/`, `pages/` | Playwright (JavaScript) smoke tests: 4 UI tests, `LoginPage` page object | In progress |
+| `tests/`, `pages/` | Playwright (JavaScript) smoke tests: 4 UI tests (catalog, search CHK-16, add to cart CHK-08, login error) + 1 `test.fixme` for known bug BUG-01, `LoginPage` and `ProductPage` page objects | In progress (CI planned for Day 7) |
 
 ## Test types
 
@@ -49,6 +49,8 @@ npm install
 npx playwright install chromium
 npm test
 ```
+
+Expected result: 4 passed, 1 skipped. The skipped test is `test.fixme` for BUG-01 (cart limit of 99 can be bypassed). It fails with "Received: 198" while the bug exists, remove `.fixme` after the fix to use it as a regression check.
 
 ## Note about SQL
 

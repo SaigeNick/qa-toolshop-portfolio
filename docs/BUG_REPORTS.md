@@ -24,7 +24,7 @@ BUG-03 and BUG-04 were found during an exploratory session on the buggy site on 
 | Browser | Chrome (latest) 1920x1080, re-checked in Playwright Chromium (headless) |
 | Severity | High - cart calculation works wrong, the cart line and total go above the allowed limit |
 | Priority | P2 - Medium - a business rule is broken in a High risk area (cart), but normal orders are not blocked |
-| Linked | CHK-11, TC-01 |
+| Linked | CHK-11, TC-01, automated as `test.fixme` in `tests/ui.spec.js` |
 | Jira | KAN-4 |
 | Reproducibility | 2 of 2 attempts |
 
