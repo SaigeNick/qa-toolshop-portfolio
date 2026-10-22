@@ -43,7 +43,7 @@ The goal of this plan is to check the main user flows of a customer: find a prod
 | Exploratory | Free sessions on the buggy version to find defects, results in `docs/BUG_REPORTS.md` | Active (as of 2026-10-20) |
 | API | Postman collection, status codes and response body checks, see `postman/` | Active (verified 2026-10-21) |
 | Database | SQL queries for data validation logic (see section 4), see `sql/` | Active (verified 2026-10-21) |
-| Regression (automated) | Playwright smoke suite in CI | Planned (Day 5-7) |
+| Regression (automated) | Playwright smoke suite in CI | In progress (CI planned for Day 7) |
 
 A status changes to Active when the related file is added to the repository.
 
@@ -117,7 +117,7 @@ Each bug report contains: ID, title, environment, severity, priority, steps to r
 | Git / GitHub (Markdown) | Version control, test documentation | Active |
 | Postman | Manual API testing, collection with basic tests | Active (verified 2026-10-21) |
 | SQL / SQLite | Data validation queries on a local copy built from API data | Active (verified 2026-10-21) |
-| Playwright (JavaScript) | UI smoke automation | Planned (Day 5) |
+| Playwright (JavaScript) | UI smoke automation | In progress |
 | GitHub Actions | Run Playwright tests on every push | Planned (Day 7) |
 
 ## 10. Risks
