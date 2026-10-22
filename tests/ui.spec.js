@@ -29,7 +29,8 @@ test('CHK-16: Search for "pliers" returns 4 matching products', async ({ page })
 test('Open Thor Hammer product page', async ({ page }) => {
   await page.goto('/');
 
-  await page.getByText('Thor Hammer').click();
+  // Only product names in catalog cards, exact match ("Claw Hammer" vs "Claw Hammer with Shock Reduction Grip")
+  await page.getByTestId('product-name').getByText('Thor Hammer', { exact: true }).click();
 
   await expect(page.getByTestId('product-name')).toHaveText('Thor Hammer');
   await expect(page.getByTestId('add-to-cart')).toBeVisible();
