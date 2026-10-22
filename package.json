@@ -1,0 +1,14 @@
+{
+  "name": "qa-toolshop-portfolio",
+  "version": "1.0.0",
+  "description": "Playwright smoke tests for Practice Software Testing - Toolshop",
+  "private": true,
+  "scripts": {
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test tests/ui.spec.js",
+    "test:headed": "npx playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
+  }
+}
