@@ -1,5 +1,6 @@
 const { test, expect } = require('@playwright/test');
 const { LoginPage } = require('../pages/LoginPage');
+const { ProductPage } = require('../pages/ProductPage');
 
 test('Catalog loads and displays products with prices', async ({ page }) => {
   await page.goto('/');
@@ -26,14 +27,15 @@ test('CHK-16: Search for "pliers" returns 4 matching products', async ({ page })
   }
 });
 
-test('Open Thor Hammer product page', async ({ page }) => {
-  await page.goto('/');
-
-  // Only product names in catalog cards, exact match ("Claw Hammer" vs "Claw Hammer with Shock Reduction Grip")
-  await page.getByTestId('product-name').getByText('Thor Hammer', { exact: true }).click();
-
+test('CHK-08: Add Thor Hammer to cart updates header counter', async ({ page }) => {
+  const productPage = new ProductPage(page);
+  await productPage.openFromCatalog('Thor Hammer');
   await expect(page.getByTestId('product-name')).toHaveText('Thor Hammer');
-  await expect(page.getByTestId('add-to-cart')).toBeVisible();
+
+  await productPage.addToCart(1);
+
+  await expect(page.getByRole('alert')).toContainText('Product added to shopping cart.');
+  await expect(page.getByTestId('cart-quantity')).toHaveText('1');
 });
 
 test('Login with unknown email and wrong password shows error', async ({ page }) => {
