@@ -15,8 +15,8 @@ Manual and automated testing of the demo e-commerce app **Toolshop** by Testsmit
 | `docs/TEST_PLAN.md` | Test strategy: scope, risks, environments, entry/exit criteria, tools | Done |
 | `docs/CHECKLIST_AND_TESTCASES.md` | 25-item risk-based checklist with execution results + 5 detailed test cases (BVA, EP, state transition) | Active |
 | `docs/BUG_REPORTS.md` | 4 bug reports: 2 from the stable site (found by the checklist), 2 from the buggy version (exploratory), with screenshots and DevTools notes, linked to Jira (KAN-4 to KAN-7) | Active (as of 2026-10-20) |
-| `postman/` | Postman collection for the public API: 7 requests, positive and negative checks, variable chaining | Active (verified 2026-10-21) |
-| `sql/` | Schema + seed built from API responses and 6 SQL validation queries | Active (verified 2026-10-21) |
+| `postman/` | Postman collection for the public API: 11 requests, positive and negative checks, variable chaining | Active (verified 2026-10-21) |
+| `sql/` | Schema + seed built from API responses and 8 SQL validation queries | Active (verified 2026-10-21) |
 | `tests/`, `pages/` | Playwright (JavaScript) smoke tests | Planned (Day 5-6) |
 
 ## Test types

@@ -53,7 +53,7 @@ The project tests a public live demo, so there is no direct access to the databa
 SQL queries (`sql/test_queries.sql`) are written against a reconstructed relational schema inferred from the public API JSON responses
 (for example `GET /products` returns `category` and `brand` objects, so the schema has `products`, `categories` and `brands` tables linked by ids).
 To make sure the queries are correct, they were executed against a local SQLite copy built from API responses
-(`sql/schema_and_seed.sql`: brands, categories, 50 products and sample cart items fetched on 2026-10-21). All 6 queries ran with zero errors.
+(`sql/schema_and_seed.sql`: brands, categories, 50 products and sample cart items fetched on 2026-10-21). All 8 queries ran with zero errors.
 The goal is to demonstrate DB validation logic (what a QA would check and how), the real production database is not used.
 
 ## 5. Environments
