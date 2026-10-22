@@ -48,3 +48,20 @@ test('Login with unknown email and wrong password shows error', async ({ page })
   await expect(page.getByTestId('login-error')).toBeVisible();
   await expect(page.getByTestId('login-error')).toContainText('Invalid email or password');
 });
+
+// BUG-01 (KAN-4): second add of 99 is accepted, counter shows 198. Remove fixme when fixed.
+test.fixme('BUG-01: Cart line for Claw Hammer never goes above 99', async ({ page }) => {
+  const productPage = new ProductPage(page);
+  await productPage.openFromCatalog('Claw Hammer');
+
+  await productPage.addToCart(99);
+  await expect(page.getByTestId('cart-quantity')).toHaveText('99');
+
+  // Wait for the second add request, otherwise the counter is checked before it updates
+  const secondAdd = page.waitForResponse((res) => res.url().includes('/carts/') && res.request().method() === 'POST');
+  await productPage.addToCart(99);
+  await secondAdd;
+
+  await page.goto('/checkout');
+  await expect(page.getByTestId('product-quantity')).toHaveValue('99');
+});
